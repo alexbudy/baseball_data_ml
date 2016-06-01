@@ -16,6 +16,7 @@ with open('Master.csv') as csvfile:
             playerData = {}
             for k in masterKeys:
                 playerData[k] = row[k]
+        masterDict[row['playerID']] = playerData
             
 playerStats = {} # playerId -> {yr: {stats}}
 playerStatsKeys = ['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'CS', 'BB']
@@ -26,9 +27,16 @@ with open('Batting.csv') as csvfile:
         if (yr < cutoffYr):
             continue
         yrStats = {}
+        invalidStatRow = False
         for k in playerStatsKeys:
-            yrStats[k] = row[k]
-
+            if (len(row[k]) == 0):
+                invalidStatRow = True
+                continue
+            yrStats[k] = int(row[k])
+        
+        if (invalidStatRow):
+            continue
+        
         if (int(row['stint']) > 1):
             prevRow = playerStats[row['playerID']][yr]
             for k in playerStatsKeys:
@@ -50,7 +58,7 @@ with open('Fielding.csv') as csvfile:
         if (yr < cutoffYr):
             continue  
         playerId = row['playerID']
-        pos = row[posKey] 
+        pos = row[posKey]
         
         if ('InnOuts' in playerStats[playerId][yr]):
             playerStats[playerId][yr]['InnOuts'] += row['InnOuts']
@@ -62,10 +70,28 @@ with open('Fielding.csv') as csvfile:
         else:
             playerStats[playerId][yr]['E'] = row['E']
 
-        playerStats[playerId][yr][posKey] = row[posKey]
+        masterDict[playerId][posKey] = pos
 
+# trainingRows -> {yr : {}, yr2 : {}, ...}
+# testRow -> {yr : {}}
+def aggregateStats(trainingRows, testRow):
+    print(trainingRows)
+    yrStart = min(trainingRows.keys())
+    yrEnd = max(trainingRows.keys())
+    aggRow = {}
+    for yr, statDict in trainingRows.iteritems():
+        print(yr)
+        print(statDict)
+        for statKey, stat in statDict.iteritems():
+            if statKey in aggRow:
+                aggRow[statKey] += stat
+            else:
+                aggRow[statKey] = stat 
+    return aggRow
 
 w = csv.writer(open("out.csv", "w"))
 for key, val in playerStats.items():
-    w.writerow([key, val])
+    w.writerow([key, aggregateStats(val, None)])
+
+
 
