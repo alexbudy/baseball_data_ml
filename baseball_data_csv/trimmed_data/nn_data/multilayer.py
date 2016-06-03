@@ -15,9 +15,9 @@ batch_size = 100
 display_step = 1
 
 #Network Parameters
-n_hidden_1 = 28
-n_hidden_2 = 28
-n_input = 28
+n_hidden_1 = 27
+n_hidden_2 = 27
+n_input = 27
 n_classes = 16
 
 # tf Graph input

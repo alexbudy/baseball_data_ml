@@ -127,7 +127,7 @@ def writeDataRowAndTrainingRow(dataWriter, labelsWriter, playerId, dataRows):
     yrStart = min(dataRows.keys())
     yrEnd = max(dataRows.keys())
     
-    lastRow = dataRows.pop(yrEnd)
+    #lastRow = dataRows.pop(yrEnd)
 
     aggStats = aggregateStats(playerId, dataRows)
     if (aggStats['AB'] < 50):  # too few at-bats over data set for significance
@@ -137,10 +137,14 @@ def writeDataRowAndTrainingRow(dataWriter, labelsWriter, playerId, dataRows):
     for k in dataPointsHeader:
         if k not in aggStats:
             return
-        orderedAggStats.append(aggStats[k])
+        if k != 'lastHR':
+            orderedAggStats.append(aggStats[k])
+        else:
+            w_labels.writerow([aggStats[k]])
+            
 
     w.writerow(orderedAggStats)
-    w_labels.writerow([lastRow['HR']])
+    #w_labels.writerow([lastRow['HR']])
 
 
 w = csv.writer(open("data.csv", "w"))
