@@ -11,15 +11,18 @@ with open("../data.csv") as f:
     data_lines = f.readlines()
     label_lines = open("../data_labels.csv").readlines()
     
+    train_row_idx = random.sample(range(1, len(data_lines)), 11600)
+    
     for idx, val in enumerate(data_lines):
+        addHeaders = False
         if (idx == 0): # header goes to both files
-            data_x.write(val)
-            test_x.write(val)
-            data_y.write(label_lines[idx])
-            test_y.write(label_lines[idx])
+            if addHeaders:
+                data_x.write(val)
+                test_x.write(val)
+                data_y.write(label_lines[idx])
+                test_y.write(label_lines[idx])
         else:
-            r = random.random()
-            if (r < 0.8):
+            if (idx in train_row_idx):
                 data_x.write(val)
                 data_y.write(label_lines[idx])
             else:
