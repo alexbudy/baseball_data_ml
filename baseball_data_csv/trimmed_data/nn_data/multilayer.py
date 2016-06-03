@@ -10,7 +10,7 @@ test_y = genfromtxt('test_y.csv', dtype='int')
 
 
 learning_rate = 0.001
-training_epochs = 15
+training_epochs = 40
 batch_size = 100
 display_step = 1
 
@@ -18,7 +18,7 @@ display_step = 1
 n_hidden_1 = 28
 n_hidden_2 = 28
 n_input = 28
-n_classes = 75
+n_classes = 16
 
 # tf Graph input
 x = tf.placeholder("float", [None, n_input])
@@ -91,6 +91,5 @@ with tf.Session() as sess:
     correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
     print(pred)
     # Calculate accuracy
-    print(correct_prediction)
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
     print "Accuracy:", accuracy.eval({x: test_x, y: test_y_onehot})
